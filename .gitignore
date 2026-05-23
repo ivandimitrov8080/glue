@@ -1,0 +1,15 @@
+_site
+_cache
+dist
+node_modules
+.env
+.devenv
+.direnv
+.elm-pages
+result
+elm-stuff
+.pre-commit-config.yaml
+server/**/*.hi
+server/**/*.o
+bin/**
+jwt.key
