@@ -106,7 +106,7 @@
             inherit inputs pkgs;
             modules = [
               {
-                devenv.root = "/home/ivand/src/idimitrov.dev";
+                devenv.root = "/home/ivand/src/glue";
                 languages = {
                   haskell = {
                     enable = true;
