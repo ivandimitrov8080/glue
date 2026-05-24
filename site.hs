@@ -6,7 +6,7 @@ import Data.Char (toUpper)
 import Data.List (nub, sortOn)
 import Data.Ord (Down (..))
 import Data.Text qualified as T
-import Data.Time.Calendar (addGregorianYearsClip, toGregorian)
+import Data.Time.Calendar (addGregorianYearsClip)
 import Data.Time.Clock (getCurrentTime, utctDay)
 import Data.Time.Format (defaultTimeLocale, formatTime)
 import Debug.Trace (trace)
@@ -68,7 +68,7 @@ injectScript js (Pandoc meta blocks) =
   Pandoc meta (blocks ++ [RawBlock (Format "html") js])
 
 myTransformOptions :: Config -> Pandoc -> Pandoc
-myTransformOptions cfg = addNumberLines . addNewtabExternalLinks cfg . injectScript ""
+myTransformOptions config = addNumberLines . addNewtabExternalLinks config . injectScript ""
 
 myReaderOptions :: ReaderOptions
 myReaderOptions =
@@ -133,8 +133,8 @@ elmMakeCompiler extraElmArgs = do
 
 -- | Generate sitemap XML for all pages
 sitemapContext :: Config -> Context String
-sitemapContext cfg =
-  field "siteRoot" (\_ -> pure $ "https://" <> T.unpack (cfgHost cfg))
+sitemapContext config =
+  field "siteRoot" (\_ -> pure $ "https://" <> T.unpack (cfgHost config))
     <> defaultContext
 
 -- | Get current ISO 8601 date
@@ -146,20 +146,19 @@ expiryDate :: IO String
 expiryDate = do
   now <- getCurrentTime
   let day = utctDay now
-      (y, m, d) = toGregorian day
       expiry = addGregorianYearsClip 1 day
   pure $ formatTime defaultTimeLocale "%Y-%m-%dT%H:%M:%S%z" (now {utctDay = expiry})
 
 main :: IO ()
 main = hakyllWith cfg $ do
-  cfg <- preprocess readConfig
+  appConfig <- preprocess readConfig
   categories <- buildCategories "posts/**" (fromCapture "category/*.html")
 
   -- Robots.txt with dynamic host
   create ["robots.txt"] $ do
     route idRoute
     compile $ do
-      let host = T.unpack (cfgHost cfg)
+      let host = T.unpack (cfgHost appConfig)
           robotsContent =
             "User-agent: *\n\
             \Allow: /\n\
@@ -214,7 +213,7 @@ main = hakyllWith cfg $ do
     compile $ do
       posts <- recentFirst =<< loadAll ("posts/**" .&&. hasNoVersion)
       pages <- loadAll (fromList ["about.rst", "contact.markdown", "room.md"] .&&. hasNoVersion)
-      let siteCtx = sitemapContext cfg
+      let siteCtx = sitemapContext appConfig
           allPages = posts <> pages
           sitemapCtx =
             listField "pages" (siteCtx <> postCtx) (pure allPages)
@@ -237,14 +236,14 @@ main = hakyllWith cfg $ do
   match (fromList ["about.rst", "contact.markdown"]) $ do
     route $ setExtension "html"
     compile $
-      pandocCompilerWithTransform myReaderOptions myWriterOptions (myTransformOptions cfg)
+      pandocCompilerWithTransform myReaderOptions myWriterOptions (myTransformOptions appConfig)
         >>= loadAndApplyTemplate "templates/default.html" defaultContext
         >>= relativizeUrls
 
   match "posts/**.org" $ do
     route $ setExtension "html"
     compile $
-      pandocCompilerWithTransform myReaderOptions myWriterOptions (myTransformOptions cfg)
+      pandocCompilerWithTransform myReaderOptions myWriterOptions (myTransformOptions appConfig)
         >>= loadAndApplyTemplate "templates/post.html" postCtx
         >>= loadAndApplyTemplate "templates/default.html" postCtx
         >>= relativizeUrls
@@ -258,7 +257,7 @@ main = hakyllWith cfg $ do
             listField "posts" postCtx (pure posts)
               <> listField "categories" (categoryCtx categories) (pure categoryItems)
               <> constField "title" "Archives"
-              <> constField "description" (T.unpack $ cfgDefaultDescription cfg)
+              <> constField "description" (T.unpack $ cfgDefaultDescription appConfig)
               <> defaultContext
 
       makeItem ""
@@ -274,7 +273,7 @@ main = hakyllWith cfg $ do
         let ctx =
               constField "title" title
                 <> listField "posts" postCtx (pure posts)
-                <> constField "description" (T.unpack $ cfgDefaultDescription cfg)
+                <> constField "description" (T.unpack $ cfgDefaultDescription appConfig)
                 <> defaultContext
         makeItem ""
           >>= loadAndApplyTemplate "templates/category.html" ctx

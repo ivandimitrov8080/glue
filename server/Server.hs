@@ -22,7 +22,7 @@ import Data.ByteString.Lazy qualified as BL
 import Data.ByteString.Lazy.Char8 qualified as BL8
 import Data.Int (Int64)
 import Data.Password.Argon2 (PasswordCheck (..), PasswordHash (..), checkPassword, hashPassword, mkPassword)
-import Data.Text (Text, length, null, pack, unpack)
+import Data.Text (Text, null, unpack)
 import Data.Text.Encoding (decodeUtf8)
 import Data.Time.Clock (UTCTime, addUTCTime, getCurrentTime)
 import Elm.Derive (defaultOptions, deriveBoth)
@@ -31,7 +31,7 @@ import Hasql.Connection.Setting qualified as ConnectionSetting
 import Hasql.Connection.Setting.Connection qualified as ConnectionSettingConnection
 import Hasql.Pool (Pool, UsageError (SessionUsageError), acquire, use)
 import Hasql.Pool.Config qualified as PoolConfig
-import Hasql.Session (CommandError (..), ResultError (..), Session, SessionError (..))
+import Hasql.Session (Session, SessionError (..))
 import Hasql.Session qualified as Session
 import Hasql.TH qualified as TH
 import Network.Wai (Application)
@@ -40,7 +40,7 @@ import Network.Wai.Middleware.Cors (CorsResourcePolicy (corsMethods, corsOrigins
 import Servant (Context (..), Handler, Proxy (..), Raw, ServerT, err400, err401, err409, err500, errBody, hoistServerWithContext, serveDirectoryFileServer, serveWithContext, throwError, (:<|>) (..))
 import Servant.API (Get, JSON, Post, ReqBody, (:>))
 import Servant.Auth (Auth, JWT)
-import Servant.Auth.Server (AuthResult (..), CookieSettings (..), FromJWT, IsSecure (..), JWTSettings, ToJWT, defaultCookieSettings, defaultJWTSettings, makeJWT, readKey, throwAll, writeKey)
+import Servant.Auth.Server (AuthResult (..), CookieSettings (..), FromJWT, JWTSettings, ToJWT, defaultCookieSettings, defaultJWTSettings, makeJWT, readKey, throwAll, writeKey)
 import Servant.Auth.Server qualified as SAS
 import System.Directory (doesFileExist)
 import System.IO (hPutStrLn, stderr)
@@ -252,7 +252,7 @@ register account =
         (Just handleRegisterDbError)
 
 handleRegisterDbError :: UsageError -> App LoginResponse
-handleRegisterDbError (SessionUsageError (QueryError _ _ (ResultError (Session.ServerError "23505" _ _ _ _)))) =
+handleRegisterDbError (SessionUsageError (QueryError _ _ (Session.ResultError (Session.ServerError "23505" _ _ _ _)))) =
   throwError err409 {errBody = BL8.pack "Username already exists"}
 handleRegisterDbError _ = throwError err500
 

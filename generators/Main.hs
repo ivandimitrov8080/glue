@@ -12,7 +12,6 @@
 
 module Main (IO, Main.main) where
 
-import Data.Maybe (mapMaybe)
 import Data.Proxy (Proxy (..))
 import Data.Text (Text, pack, split, unpack)
 import Data.Text qualified as T
@@ -25,13 +24,10 @@ import Servant.Elm
     UrlPrefix (Static),
     defElmImports,
     defElmOptions,
-    defaultTypeAlterations,
-    elmAlterations,
     generateElmModuleWith,
   )
-import Servant.Elm qualified as Elm
 import Servant.Elm.Internal.Foreign (LangElm)
-import Servant.Foreign (Foreign, GenerateList, HasForeign (..), HasForeignType)
+import Servant.Foreign (Foreign, HasForeign (..), HasForeignType)
 import Server
 import Text.RawString.QQ (r)
 
@@ -110,3 +106,4 @@ generateElm = do
         ]
         (Proxy :: Proxy (Api '[JWT]))
       postProcessModule
+    [] -> error "generatedModulePath must contain at least one path component"
