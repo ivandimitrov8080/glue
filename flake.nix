@@ -364,7 +364,7 @@
                     ];
                   };
                   "build:server" = {
-                    exec = "ghc -threaded -outputdir _cache/server server/Main.hs -iserver -o bin/server";
+                    exec = "ghc -Wall -Werror -threaded -outputdir _cache/server server/Main.hs -iserver -o bin/server";
                     before = [ "devenv:processes:server" ];
                   };
                   "build:frontend" = {
@@ -373,7 +373,7 @@
                     before = [ "devenv:processes:site" ];
                   };
                   "build:site" = {
-                    exec = "ghc -outputdir _cache/site site.hs -o bin/site";
+                    exec = "ghc -Wall -Werror -outputdir _cache/site site.hs -o bin/site";
                     before = [ "build:frontend" ];
                   };
                   "build:library" = {
@@ -385,7 +385,7 @@
                   };
                   "build:generators" = {
                     exec = ''
-                      ghc -outputdir _cache/generators generators/Main.hs -iserver -o bin/gen
+                      ghc -Wall -Werror -outputdir _cache/generators generators/Main.hs -iserver -o bin/gen
                     '';
                     before = [ "build:library" ];
                   };
