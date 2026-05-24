@@ -200,7 +200,7 @@
   :config
   (setq company-idle-delay 0.2
         company-minimum-prefix-length 2
-        company-show-numbers t))
+        company-show-quick-access t))
 
 ;; Flycheck - syntax checking
 (use-package flycheck
@@ -270,7 +270,10 @@
         org-hide-leading-stars t
         org-src-fontify-natively t
         org-src-tab-acts-natively t
-        org-edit-src-content-indentation 0))
+        org-src-content-indentation 0))
+
+(use-package org-tempo
+  :demand t)
 
 ;; Tree-sitter for better syntax highlighting
 (use-package tree-sitter
