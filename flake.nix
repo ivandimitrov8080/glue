@@ -250,6 +250,21 @@
                         markdown-mode
                         yaml-mode
                         catppuccin-theme
+                        which-key
+                        vertico
+                        orderless
+                        marginalia
+                        helpful
+                        consult
+                        all-the-icons
+                        all-the-icons-dired
+                        avy
+                        multiple-cursors
+                        expand-region
+                        doom-modeline
+                        rainbow-delimiters
+                        smartparens
+                        undo-tree
                         pkgs.shellcheck
                       ];
 
