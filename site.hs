@@ -23,7 +23,7 @@ import Text.Blaze.Html (toHtml, toValue, (!))
 import Text.Blaze.Html.Renderer.String (renderHtml)
 import Text.Blaze.Html5 qualified as H
 import Text.Blaze.Html5.Attributes qualified as A
-import Text.Pandoc (Block (CodeBlock), Pandoc, WriterOptions (writerHighlightStyle))
+import Text.Pandoc (Block (CodeBlock, RawBlock), Format (..), Pandoc (..), WriterOptions (writerHighlightStyle))
 import Text.Pandoc.Definition (Inline (Link))
 import Text.Pandoc.Options (Extension (Ext_link_attributes), ReaderOptions (readerExtensions), extensionsFromList)
 import Text.Pandoc.Walk (walk)
@@ -69,8 +69,12 @@ addNewtabExternalLinks cfg = walk go
       not $ ("http://" <> siteHost) `T.isPrefixOf` u || ("https://" <> siteHost) `T.isPrefixOf` u
     siteHost = cfgHost cfg
 
+injectScript :: T.Text -> Pandoc -> Pandoc
+injectScript js (Pandoc meta blocks) =
+  Pandoc meta (blocks ++ [RawBlock (Format "html") js])
+
 myTransformOptions :: Config -> Pandoc -> Pandoc
-myTransformOptions cfg = addNumberLines . addNewtabExternalLinks cfg
+myTransformOptions cfg = addNumberLines . addNewtabExternalLinks cfg . injectScript ""
 
 myReaderOptions :: ReaderOptions
 myReaderOptions =
@@ -243,7 +247,7 @@ main = hakyllWith cfg $ do
         >>= loadAndApplyTemplate "templates/default.html" defaultContext
         >>= relativizeUrls
 
-  match "posts/**.md" $ do
+  match "posts/**.org" $ do
     route $ setExtension "html"
     compile $
       pandocCompilerWithTransform myReaderOptions myWriterOptions (myTransformOptions cfg)
@@ -299,13 +303,6 @@ main = hakyllWith cfg $ do
         >>= relativizeUrls
 
   match "templates/*" $ compile templateBodyCompiler
-
-  match "room.md" $ do
-    route $ setExtension "html"
-    compile $ do
-      pandocCompilerWithTransform myReaderOptions myWriterOptions (myTransformOptions cfg)
-        >>= loadAndApplyTemplate "templates/default.html" defaultContext
-        >>= relativizeUrls
 
   match (fromList ["manifest.json", "favicon.ico"]) $ do
     route idRoute

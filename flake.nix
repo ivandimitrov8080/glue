@@ -156,6 +156,9 @@
                         enable = true;
                         enableTelescope = true;
                       };
+                      orgmode = {
+                        enable = true;
+                      };
                     };
                   })
                   browser-sync
