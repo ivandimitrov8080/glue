@@ -207,7 +207,7 @@
                     defaultInitFile = true;
 
                     # Package is optional, defaults to pkgs.emacs
-                    package = pkgs.emacs-unstable;
+                    package = pkgs.emacs-unstable-pgtk;
 
                     # By default emacsWithPackagesFromUsePackage will only pull in
                     # packages with `:ensure`, `:ensure t` or `:ensure <package name>`.
