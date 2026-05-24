@@ -190,7 +190,7 @@
          (web-mode . eglot-ensure))
   :config
   (setq eglot-autoshutdown t)
-  (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
+  (add-to-list 'eglot-server-programs '(nix-mode . ("nixd")))
   (add-to-list 'eglot-server-programs '(elm-mode . ("elm-language-server")))
   (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp"))))
 
