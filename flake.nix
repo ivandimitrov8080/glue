@@ -147,6 +147,26 @@
                   elm2nix
                   hurl
                   (nixvim.web.extend {
+                    keymaps = [
+                      {
+                        mode = "n";
+                        key = "<leader>bc";
+                        action.__raw = "function() require('bufferline').cycle(1) end";
+                        options = {
+                          silent = true;
+                          desc = "Switch tabs forwards";
+                        };
+                      }
+                      {
+                        mode = "n";
+                        key = "<leader>bC";
+                        action.__raw = "function() require('bufferline').cycle(-1) end";
+                        options = {
+                          silent = true;
+                          desc = "Switch tabs backwards";
+                        };
+                      }
+                    ];
                     lsp.servers = {
                       elmls.enable = true;
                       sqls.enable = true;
