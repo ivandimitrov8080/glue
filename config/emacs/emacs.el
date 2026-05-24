@@ -42,7 +42,144 @@
   :init
   (setq catppuccin-flavor 'mocha)
   :config
-  (load-theme 'catppuccin :co-confirm))
+  (load-theme 'catppuccin :no-confirm))
+
+;;; Completion & Discovery Framework
+
+;; which-key - Show available keybindings in popup
+(use-package which-key
+  :init
+  (which-key-mode)
+  :config
+  (setq which-key-idle-delay 0.5
+        which-key-sort-order 'which-key-key-order-alpha))
+
+;; vertico - Vertical completion UI
+(use-package vertico
+  :init
+  (vertico-mode)
+  :config
+  (setq vertico-cycle t))
+
+;; orderless - Flexible completion style (space-separated, out-of-order matching)
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
+
+;; marginalia - Rich annotations in minibuffer
+(use-package marginalia
+  :init
+  (marginalia-mode)
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle)))
+
+;; consult - Enhanced navigation and search with live preview
+(use-package consult
+  :bind (("C-s" . consult-line)
+         ("C-x b" . consult-buffer)
+         ("C-x C-r" . consult-recent-file)
+         ("M-g i" . consult-imenu)
+         ("M-g g" . consult-goto-line)
+         ("M-s g" . consult-grep)
+         ("M-s r" . consult-ripgrep))
+  :config
+  (setq consult-narrow-key "<"))
+
+;; helpful - Better help buffers with source code and references
+(use-package helpful
+  :bind (("C-h f" . helpful-callable)
+         ("C-h v" . helpful-variable)
+         ("C-h k" . helpful-key)
+         ("C-c C-d" . helpful-at-point)
+         ("C-h F" . helpful-function)
+         ("C-h C" . helpful-command)))
+
+;;; Visual Enhancements
+
+;; all-the-icons - Icon support (run M-x all-the-icons-install-fonts once)
+(use-package all-the-icons
+  :if (display-graphic-p))
+
+;; all-the-icons-dired - Icons in file browser
+(use-package all-the-icons-dired
+  :if (display-graphic-p)
+  :hook (dired-mode . all-the-icons-dired-mode))
+
+;; doom-modeline - Beautiful, informative status bar
+(use-package doom-modeline
+  :init
+  (doom-modeline-mode 1)
+  :config
+  (setq doom-modeline-height 25
+        doom-modeline-bar-width 4
+        doom-modeline-icon t
+        doom-modeline-major-mode-icon t
+        doom-modeline-major-mode-color-icon t
+        doom-modeline-buffer-file-name-style 'truncate-upto-project
+        doom-modeline-lsp t))
+
+;; rainbow-delimiters - Colorful nested parentheses/brackets
+(use-package rainbow-delimiters
+  :hook ((prog-mode . rainbow-delimiters-mode)
+         (elm-mode . rainbow-delimiters-mode)
+         (haskell-mode . rainbow-delimiters-mode)))
+
+;;; Navigation & Editing
+
+;; avy - Jump to visible text by typing characters
+(use-package avy
+  :bind (("C-:" . avy-goto-char)
+         ("C-'" . avy-goto-char-2)
+         ("M-g f" . avy-goto-line)
+         ("M-g w" . avy-goto-word-1)
+         ("C-c C-j" . avy-resume))
+  :config
+  (setq avy-background t
+        avy-style 'at-full))
+
+;; multiple-cursors - Edit multiple locations simultaneously
+(use-package multiple-cursors
+  :bind (("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C-<" . mc/mark-all-like-this)
+         ("C-S-c C-S-c" . mc/edit-lines)))
+
+;; expand-region - Intelligently expand selection
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+
+;; smartparens - Intelligent parens/bracket handling
+(use-package smartparens
+  :hook (prog-mode . smartparens-mode)
+  :config
+  (require 'smartparens-config)
+  (setq sp-highlight-pair-overlay nil
+        sp-highlight-wrap-overlay nil
+        sp-highlight-wrap-tag-overlay nil))
+
+;; undo-tree - Visual undo history
+(use-package undo-tree
+  :init
+  (global-undo-tree-mode)
+  :config
+  (setq undo-tree-auto-save-history t
+        undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
+
+;;; Built-in Enhancements
+
+;; savehist - Save minibuffer history between sessions
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; recentf - Track recently opened files
+(use-package recentf
+  :init
+  (recentf-mode 1)
+  :config
+  (setq recentf-max-saved-items 100))
 
 ;; Eglot - LSP client (built-in Emacs 29+)
 (use-package eglot
@@ -156,7 +293,7 @@
 (use-package yaml-mode
   :mode "\\.yaml\\'\\|\\.yml\\'")
 
-;;; Keybindings
+;;; Additional Keybindings
 
 ;; Better window navigation
 (global-set-key (kbd "C-c <left>")  'windmove-left)

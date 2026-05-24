@@ -3,26 +3,20 @@
 
 import Config (Config (cfgDefaultDescription, cfgHost), readConfig)
 import Data.Char (toUpper)
-import Data.List (intercalate, nub, sortOn)
+import Data.List (nub, sortOn)
 import Data.Ord (Down (..))
 import Data.Text qualified as T
 import Data.Time.Calendar (addGregorianYearsClip, toGregorian)
 import Data.Time.Clock (getCurrentTime, utctDay)
 import Data.Time.Format (defaultTimeLocale, formatTime)
 import Debug.Trace (trace)
-import GHC.Internal.Data.Proxy (Proxy)
 import Hakyll
 import Hakyll.Core.Dependencies (DependencyKind (KindContent))
-import Skylighting (Style, monochrome, styleToCss, zenburn)
-import Skylighting.Styles (kate, monochrome, pygments, zenburn)
+import Skylighting (Style, styleToCss, zenburn)
 import System.Directory (createDirectoryIfMissing)
-import System.FilePath (dropExtension, splitDirectories, takeDirectory, (</>))
+import System.FilePath (splitDirectories, (</>))
 import System.IO.Temp (withTempDirectory)
 import System.Process (callProcess)
-import Text.Blaze.Html (toHtml, toValue, (!))
-import Text.Blaze.Html.Renderer.String (renderHtml)
-import Text.Blaze.Html5 qualified as H
-import Text.Blaze.Html5.Attributes qualified as A
 import Text.Pandoc (Block (CodeBlock, RawBlock), Format (..), Pandoc (..), WriterOptions (writerHighlightStyle))
 import Text.Pandoc.Definition (Inline (Link))
 import Text.Pandoc.Options (Extension (Ext_link_attributes), ReaderOptions (readerExtensions), extensionsFromList)
@@ -49,7 +43,7 @@ addNumberLines = walk go
     go x = x
 
 addNewtabExternalLinks :: Config -> Pandoc -> Pandoc
-addNewtabExternalLinks cfg = walk go
+addNewtabExternalLinks con = walk go
   where
     go (Link (ident, classes, kvs) label (url, title))
       | notCurrentHost url =
@@ -67,7 +61,7 @@ addNewtabExternalLinks cfg = walk go
         rel = ("rel", "noopener noreferrer")
     notCurrentHost u =
       not $ ("http://" <> siteHost) `T.isPrefixOf` u || ("https://" <> siteHost) `T.isPrefixOf` u
-    siteHost = cfgHost cfg
+    siteHost = cfgHost con
 
 injectScript :: T.Text -> Pandoc -> Pandoc
 injectScript js (Pandoc meta blocks) =
