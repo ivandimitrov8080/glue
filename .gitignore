@@ -9,6 +9,7 @@ node_modules
 result
 elm-stuff
 .pre-commit-config.yaml
+\#*\#
 server/**/*.hi
 server/**/*.o
 bin/**
