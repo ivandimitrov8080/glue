@@ -265,6 +265,7 @@
                         rainbow-delimiters
                         smartparens
                         undo-tree
+                        dired-quick-sort
                         pkgs.shellcheck
                       ];
 

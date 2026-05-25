@@ -296,6 +296,9 @@
 (use-package yaml-mode
   :mode "\\.yaml\\'\\|\\.yml\\'")
 
+(require 'dired-quick-sort)
+(dired-quick-sort-setup)
+
 ;;; Additional Keybindings
 
 ;; Better window navigation
