@@ -38,263 +38,231 @@
 ;;; Package Configuration
 
 ;; Theme
-(use-package catppuccin-theme
-  :init
-  (setq catppuccin-flavor 'mocha)
-  :config
-  (load-theme 'catppuccin :no-confirm))
+(require 'catppuccin-theme)
+(setq catppuccin-flavor 'mocha)
+(load-theme 'catppuccin :no-confirm)
 
 ;;; Completion & Discovery Framework
 
 ;; which-key - Show available keybindings in popup
-(use-package which-key
-  :init
-  (which-key-mode)
-  :config
-  (setq which-key-idle-delay 0.5
-        which-key-sort-order 'which-key-key-order-alpha))
+(require 'which-key)
+(which-key-mode)
+(setq which-key-idle-delay 0.5
+      which-key-sort-order 'which-key-key-order-alpha)
 
 ;; vertico - Vertical completion UI
-(use-package vertico
-  :init
-  (vertico-mode)
-  :config
-  (setq vertico-cycle t))
+(require 'vertico)
+(vertico-mode)
+(setq vertico-cycle t)
 
 ;; orderless - Flexible completion style (space-separated, out-of-order matching)
-(use-package orderless
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
+(require 'orderless)
+(setq completion-styles '(orderless basic)
+      completion-category-defaults nil
+      completion-category-overrides '((file (styles partial-completion))))
 
 ;; marginalia - Rich annotations in minibuffer
-(use-package marginalia
-  :init
-  (marginalia-mode)
-  :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle)))
+(require 'marginalia)
+(marginalia-mode)
+(define-key minibuffer-local-map (kbd "M-A") 'marginalia-cycle)
 
 ;; consult - Enhanced navigation and search with live preview
-(use-package consult
-  :bind (("C-s" . consult-line)
-         ("C-x b" . consult-buffer)
-         ("C-x C-r" . consult-recent-file)
-         ("M-g i" . consult-imenu)
-         ("M-g g" . consult-goto-line)
-         ("M-s g" . consult-grep)
-         ("M-s r" . consult-ripgrep))
-  :config
-  (setq consult-narrow-key "<"))
+(require 'consult)
+(global-set-key (kbd "C-s") 'consult-line)
+(global-set-key (kbd "C-x b") 'consult-buffer)
+(global-set-key (kbd "C-x C-r") 'consult-recent-file)
+(global-set-key (kbd "M-g i") 'consult-imenu)
+(global-set-key (kbd "M-g g") 'consult-goto-line)
+(global-set-key (kbd "M-s g") 'consult-grep)
+(global-set-key (kbd "M-s r") 'consult-ripgrep)
+(setq consult-narrow-key "<")
 
 ;; helpful - Better help buffers with source code and references
-(use-package helpful
-  :bind (("C-h f" . helpful-callable)
-         ("C-h v" . helpful-variable)
-         ("C-h k" . helpful-key)
-         ("C-c C-d" . helpful-at-point)
-         ("C-h F" . helpful-function)
-         ("C-h C" . helpful-command)))
+(require 'helpful)
+(global-set-key (kbd "C-h f") 'helpful-callable)
+(global-set-key (kbd "C-h v") 'helpful-variable)
+(global-set-key (kbd "C-h k") 'helpful-key)
+(global-set-key (kbd "C-c C-d") 'helpful-at-point)
+(global-set-key (kbd "C-h F") 'helpful-function)
+(global-set-key (kbd "C-h C") 'helpful-command)
 
 ;;; Visual Enhancements
 
 ;; all-the-icons - Icon support (run M-x all-the-icons-install-fonts once)
-(use-package all-the-icons
-  :if (display-graphic-p))
+(when (display-graphic-p)
+  (require 'all-the-icons))
 
 ;; all-the-icons-dired - Icons in file browser
-(use-package all-the-icons-dired
-  :if (display-graphic-p)
-  :hook (dired-mode . all-the-icons-dired-mode))
+(when (display-graphic-p)
+  (require 'all-the-icons-dired)
+  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
 ;; doom-modeline - Beautiful, informative status bar
-(use-package doom-modeline
-  :init
-  (doom-modeline-mode 1)
-  :config
-  (setq doom-modeline-height 25
-        doom-modeline-bar-width 4
-        doom-modeline-icon t
-        doom-modeline-major-mode-icon t
-        doom-modeline-major-mode-color-icon t
-        doom-modeline-buffer-file-name-style 'truncate-upto-project
-        doom-modeline-lsp t))
+(require 'doom-modeline)
+(doom-modeline-mode 1)
+(setq doom-modeline-height 25
+      doom-modeline-bar-width 4
+      doom-modeline-icon t
+      doom-modeline-major-mode-icon t
+      doom-modeline-major-mode-color-icon t
+      doom-modeline-buffer-file-name-style 'truncate-upto-project
+      doom-modeline-lsp t)
 
 ;; rainbow-delimiters - Colorful nested parentheses/brackets
-(use-package rainbow-delimiters
-  :hook ((prog-mode . rainbow-delimiters-mode)
-         (elm-mode . rainbow-delimiters-mode)
-         (haskell-mode . rainbow-delimiters-mode)))
+(require 'rainbow-delimiters)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'elm-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'haskell-mode-hook 'rainbow-delimiters-mode)
 
 ;;; Navigation & Editing
 
 ;; avy - Jump to visible text by typing characters
-(use-package avy
-  :bind (("C-:" . avy-goto-char)
-         ("C-'" . avy-goto-char-2)
-         ("M-g f" . avy-goto-line)
-         ("M-g w" . avy-goto-word-1)
-         ("C-c C-j" . avy-resume))
-  :config
-  (setq avy-background t
-        avy-style 'at-full))
+(require 'avy)
+(global-set-key (kbd "C-:") 'avy-goto-char)
+(global-set-key (kbd "C-'") 'avy-goto-char-2)
+(global-set-key (kbd "M-g f") 'avy-goto-line)
+(global-set-key (kbd "M-g w") 'avy-goto-word-1)
+(global-set-key (kbd "C-c C-j") 'avy-resume)
+(setq avy-background t
+      avy-style 'at-full)
 
 ;; multiple-cursors - Edit multiple locations simultaneously
-(use-package multiple-cursors
-  :bind (("C->" . mc/mark-next-like-this)
-         ("C-<" . mc/mark-previous-like-this)
-         ("C-c C-<" . mc/mark-all-like-this)
-         ("C-S-c C-S-c" . mc/edit-lines)))
+(require 'multiple-cursors)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 
 ;; expand-region - Intelligently expand selection
-(use-package expand-region
-  :bind ("C-=" . er/expand-region))
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
 
 ;; smartparens - Intelligent parens/bracket handling
-(use-package smartparens
-  :hook (prog-mode . smartparens-mode)
-  :config
-  (require 'smartparens-config)
-  (setq sp-highlight-pair-overlay nil
-        sp-highlight-wrap-overlay nil
-        sp-highlight-wrap-tag-overlay nil))
+(require 'smartparens)
+(require 'smartparens-config)
+(add-hook 'prog-mode-hook 'smartparens-mode)
+(setq sp-highlight-pair-overlay nil
+      sp-highlight-wrap-overlay nil
+      sp-highlight-wrap-tag-overlay nil)
 
 ;; undo-tree - Visual undo history
-(use-package undo-tree
-  :init
-  (global-undo-tree-mode)
-  :config
-  (setq undo-tree-auto-save-history t
-        undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
+(require 'undo-tree)
+(global-undo-tree-mode)
+(setq undo-tree-auto-save-history t
+      undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
 
 ;;; Built-in Enhancements
 
 ;; savehist - Save minibuffer history between sessions
-(use-package savehist
-  :init
-  (savehist-mode))
+(require 'savehist)
+(savehist-mode)
 
 ;; recentf - Track recently opened files
-(use-package recentf
-  :init
-  (recentf-mode 1)
-  :config
-  (setq recentf-max-saved-items 100))
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-saved-items 100)
 
 ;; Eglot - LSP client (built-in Emacs 29+)
-(use-package eglot
-  :hook ((nix-mode . eglot-ensure)
-         (elm-mode . eglot-ensure)
-         (haskell-mode . eglot-ensure)
-         (js-mode . eglot-ensure)
-         (web-mode . eglot-ensure))
-  :config
-  (setq eglot-autoshutdown t)
-  (add-to-list 'eglot-server-programs '(nix-mode . ("nixd")))
-  (add-to-list 'eglot-server-programs '(elm-mode . ("elm-language-server")))
-  (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp"))))
+(require 'eglot)
+(add-hook 'nix-mode-hook 'eglot-ensure)
+(add-hook 'elm-mode-hook 'eglot-ensure)
+(add-hook 'haskell-mode-hook 'eglot-ensure)
+(add-hook 'js-mode-hook 'eglot-ensure)
+(add-hook 'web-mode-hook 'eglot-ensure)
+(setq eglot-autoshutdown t)
+(add-to-list 'eglot-server-programs '(nix-mode . ("nixd")))
+(add-to-list 'eglot-server-programs '(elm-mode . ("elm-language-server")))
+(add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
 
 ;; Company - completion framework
-(use-package company
-  :hook (after-init . global-company-mode)
-  :config
-  (setq company-idle-delay 0.2
-        company-minimum-prefix-length 2
-        company-show-quick-access t))
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(setq company-idle-delay 0.2
+      company-minimum-prefix-length 2
+      company-show-quick-access t)
 
 ;; Flycheck - syntax checking
-(use-package flycheck
-  :hook (after-init . global-flycheck-mode))
+(require 'flycheck)
+(add-hook 'after-init-hook 'global-flycheck-mode)
 
 ;; Magit - Git interface
-(use-package magit
-  :bind ("C-x g" . magit-status))
+(require 'magit)
+(global-set-key (kbd "C-x g") 'magit-status)
 
 ;; Projectile - project management
-(use-package projectile
-  :init
-  (projectile-mode +1)
-  :bind-keymap
-  ("C-c p" . projectile-command-map))
+(require 'projectile)
+(projectile-mode +1)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
 ;;; Language Support
 
 ;; Nix
-(use-package nix-mode
-  :mode "\\.nix\\'")
+(require 'nix-mode)
+(add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-mode))
 
 ;; Elm
-(use-package elm-mode
-  :mode "\\.elm\\'"
-  :config
-  (setq elm-format-on-save t))
+(require 'elm-mode)
+(add-to-list 'auto-mode-alist '("\\.elm\\'" . elm-mode))
+(setq elm-format-on-save t)
 
 ;; Haskell
-(use-package haskell-mode
-  :mode "\\.hs\\'"
-  :config
-  (setq haskell-process-type 'cabal-repl
-        haskell-interactive-popup-errors nil))
+(require 'haskell-mode)
+(add-to-list 'auto-mode-alist '("\\.hs\\'" . haskell-mode))
+(setq haskell-process-type 'cabal-repl
+      haskell-interactive-popup-errors nil)
 
 ;; Web-mode for HTML
-(use-package web-mode
-  :mode ("\\.html?\\'" "\\.css\\'")
-  :config
-  (setq web-mode-markup-indent-offset 2
-        web-mode-css-indent-offset 2
-        web-mode-code-indent-offset 2
-        web-mode-enable-auto-pairing t
-        web-mode-enable-css-colorization t))
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+(setq web-mode-markup-indent-offset 2
+      web-mode-css-indent-offset 2
+      web-mode-code-indent-offset 2
+      web-mode-enable-auto-pairing t
+      web-mode-enable-css-colorization t)
 
 ;; JavaScript
-(use-package js2-mode
-  :mode "\\.js\\'"
-  :config
-  (setq js2-basic-offset 2
-        js2-bounce-indent-p t))
+(require 'js2-mode)
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(setq js2-basic-offset 2
+      js2-bounce-indent-p t)
 
 ;; JSON
-(use-package json-mode
-  :mode "\\.json\\'")
+(require 'json-mode)
+(add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
 
 ;; SQL
-(use-package sql-indent
-  :after sql
-  :config
+(with-eval-after-load 'sql
+  (require 'sql-indent)
   (setq sql-indent-offset 2))
 
 ;; Org Mode
-(use-package org
-  :config
-  (setq org-startup-indented t
-        org-hide-leading-stars t
-        org-src-fontify-natively t
-        org-src-tab-acts-natively t
-        org-src-content-indentation 0))
+(require 'org)
+(setq org-startup-indented t
+      org-hide-leading-stars t
+      org-src-fontify-natively t
+      org-src-tab-acts-natively t
+      org-src-content-indentation 0)
 
-(use-package org-tempo
-  :demand t)
+(require 'org-tempo)
 
 ;; Tree-sitter for better syntax highlighting
-(use-package tree-sitter
-  :config
-  (global-tree-sitter-mode))
+(require 'tree-sitter)
+(global-tree-sitter-mode)
 
-(use-package tree-sitter-langs
-  :after tree-sitter
-  :config
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+(require 'tree-sitter-langs)
+(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
 ;; Markdown mode (often useful for documentation)
-(use-package markdown-mode
-  :mode (("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
-  :config
-  (setq markdown-command "pandoc"))
+(require 'markdown-mode)
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(setq markdown-command "pandoc")
 
 ;; YAML mode
-(use-package yaml-mode
-  :mode "\\.yaml\\'\\|\\.yml\\'")
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
 
 (require 'dired-quick-sort)
 (dired-quick-sort-setup)
